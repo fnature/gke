@@ -1,12 +1,12 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: hello-svc-global
+  name: b-svc-g
   annotations:
     io.cilium/global-service: "true"
 spec:
   selector:
-    app: hello-app
+    app: b
   ports:
   - protocol: TCP
     port: 80
