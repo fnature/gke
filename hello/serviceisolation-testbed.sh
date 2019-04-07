@@ -6,6 +6,7 @@ cluster1="${CLUSTER1:-cilium19}"
 cluster2="${CLUSTER2:-cilium20}"
 id1="${CLUSTERID1:-19}"
 id2="${CLUSTERID2:-20}"
+clusters=( $cluster1 $cluster2 )
 
 # Error if no parameter are provided
 if [ $# -eq 0 ] ; then
@@ -15,9 +16,8 @@ if [ $# -eq 0 ] ; then
 fi
 
 echo "creating global services in both clusters"
-for i in {1..2}
+for cluster in "${clusters[@]}"
 do
- cluster = cluster$i
  kubectx $cluster 
  k create -f a-svc-g.yaml
  k create -f b-svc-g.yaml
@@ -25,9 +25,18 @@ do
  k create -f d-svc-g.yaml
 done
 
+echo "creating configmaps in both clusters"
+
+for i in {1..2}
+do
+ kubectx ${clusters[$i-1]}
+ k create -f response-cluster$i.yaml
+done
+
+
 # Error if no parameter are provided
 if [ $1 = "noneshared" ] ; then
- echo "noneshared";
+ echo "noneshared"
  
  kubectx $cluster1
  k create -f a.yaml
@@ -35,11 +44,11 @@ if [ $1 = "noneshared" ] ; then
 
  kubectx $cluster2
  k create -f c2.yaml
- k create -f d2.yaml
+ k create -f d2.yaml;
 
  else
   if [ $1 = "shared" ]; then
-   echo "shared";
+   echo "shared"
    
    kubectx $cluster1
    k create -f a.yaml
@@ -50,12 +59,11 @@ if [ $1 = "noneshared" ] ; then
 
    for i in {1..2}
    do
-    cluster = cluster$i
-    kubectx $cluster
+    kubectx ${clusters[i-1]}
     
     k create -f c$i.yaml
     k create -f d$i.yaml
-   done
+   done;
 
   else
    echo "bad input"
