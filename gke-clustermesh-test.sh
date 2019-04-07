@@ -1,34 +1,6 @@
 #!/bin/bash
 
 
-# Enable APIs
-
-gcloud services enable \
-        cloudapis.googleapis.com \
-        container.googleapis.com \
-        containerregistry.googleapis.com \
-        cloudbuild.googleapis.com
-
-
-# Add tools to Cloud Shell
-
-mkdir -p ~/.bin && \
-cd ~/.bin && \
-curl -LO https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx && \
-chmod +x kubectx && \
-curl -LO https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens && \
-chmod +x kubens && \
-curl -LO  https://storage.googleapis.com/kubernetes-helm/helm-v2.12.0-linux-amd64.tar.gz && \
-tar xzf helm-v2.12.0-linux-amd64.tar.gz && \
-rm helm-v2.12.0-linux-amd64.tar.gz && \
-mv linux-amd64/helm ./helm && \
-rm -r linux-amd64 && \
-export PATH=${HOME}/.bin:${PATH}
-cd ~
-mkdir gke-clustermesh-test
-cd gke-clustermesh-test
-
-
 # Variables
 export GCLOUD_PROJECT=$(gcloud config get-value project)
 export GKE_ZONE="europe-west4-a"
@@ -37,7 +9,12 @@ export CLUSTER1="cilium19"
 export CLUSTER2="cilium20"
 export CLUSTERID1="19"
 export CLUSTERID2="20"
+export FOLDER="gke-clustermesh-test"
 
+cd ~
+rm -rf $CLUSTER1$CLUSTER2
+mkdir $CLUSTER1$CLUSTER2
+cd $CLUSTER1$CLUSTER2
 
 
 
