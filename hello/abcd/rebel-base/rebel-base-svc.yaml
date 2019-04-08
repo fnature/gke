@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: d-svc-g
+  name: rebel-base
   annotations:
     io.cilium/global-service: "true"
 spec:
@@ -9,4 +9,4 @@ spec:
   ports:
   - port: 80
   selector:
-    name: d
+    name: rebel-base

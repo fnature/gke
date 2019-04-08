@@ -27,7 +27,7 @@ spec:
       volumes:
         - name: html
           configMap:
-            name: response-cluster2
+            name: res-clust2
             items:
               - key: message
                 path: index.html

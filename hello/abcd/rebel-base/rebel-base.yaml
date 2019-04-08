@@ -1,16 +1,16 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: c
+  name: rebel-base
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        name: c
+        name: rebel-base
     spec:
       containers:
-      - name: c
+      - name: rebel-base
         image: docker.io/nginx:1.15.8
         volumeMounts:
           - name: html
@@ -27,7 +27,7 @@ spec:
       volumes:
         - name: html
           configMap:
-            name: res-clust2
+            name: rebel-base-response
             items:
               - key: message
                 path: index.html

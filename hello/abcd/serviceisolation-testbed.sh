@@ -30,7 +30,7 @@ echo "creating configmaps in both clusters"
 for i in {1..2}
 do
  kubectx ${clusters[$i-1]}
- k create -f response-cluster$i.yaml
+ k create -f res-clust$i.yaml
 done
 
 
@@ -54,7 +54,7 @@ if [ $1 = "noneshared" ] ; then
    k create -f a.yaml
   
    kubectx $cluster2
-   k create -f b.yaml
+   k create -f b2.yaml
 
 
    for i in {1..2}
