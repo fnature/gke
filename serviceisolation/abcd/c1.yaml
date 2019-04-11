@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: c
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: c
+    spec:
+      containers:
+      - name: c
+        image: docker.io/nginx:1.15.8
+        volumeMounts:
+          - name: html
+            mountPath: /usr/share/nginx/html/
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 1
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+      volumes:
+        - name: html
+          configMap:
+            name: res-clust1
+            items:
+              - key: message
+                path: index.html

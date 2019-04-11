@@ -1,0 +1,17 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+description: "L3 policy to restrict application a access to only containers in application a network"
+metadata:
+  name: "l3-b"
+spec:
+  endpointSelector:
+    matchLabels:
+      name: b
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        name: b
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        name: b

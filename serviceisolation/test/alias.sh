@@ -1,0 +1,1 @@
+alias mytest='echo bidule'
