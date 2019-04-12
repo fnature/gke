@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: a-svc-g
+  annotations:
+    io.cilium/global-service: "true"
+spec:
+  selector:
+    app: a
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080

@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: hello-svc-global
+  annotations:
+    io.cilium/global-service: "true"
+spec:
+  selector:
+    app: hello-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
