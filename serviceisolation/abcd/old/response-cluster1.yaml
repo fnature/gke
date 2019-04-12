@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: response-cluster1
-data:
-  message: "{\"Hello, We are in Cluster-1\"}\n"
