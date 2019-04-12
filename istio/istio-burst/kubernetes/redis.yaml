@@ -1,0 +1,36 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+ name: redis-cache
+spec:
+ template:
+   metadata:
+     labels:
+       app: redis-cache
+   spec:
+     containers:
+     - name: redis
+       image: redis:alpine
+       ports:
+       - containerPort: 6379
+       readinessProbe:
+         periodSeconds: 5
+         tcpSocket:
+           port: 6379
+       livenessProbe:
+         periodSeconds: 5
+         tcpSocket:
+           port: 6379
+       volumeMounts:
+       - mountPath: /data
+         name: redis-data
+       resources:
+         limits:
+           memory: 256Mi
+           cpu: 125m
+         requests:
+           cpu: 70m
+           memory: 200Mi
+     volumes:
+     - name: redis-data
+       emptyDir: {}

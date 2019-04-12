@@ -1,8 +1,8 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
-description: "L4 policy to restrict application a access to only containers in application a network"
+description: "L7 policy to restrict application a access to only containers in application a network"
 metadata:
-  name: "l4-a"
+  name: "l7-a"
 spec:
   endpointSelector:
     matchLabels:
@@ -10,8 +10,12 @@ spec:
   ingress:
   - fromEndpoints:
     - matchLabels:
-        name: c
+        name: a
     toPorts:
     - ports:
-      - port: "8080"
+      - port: "80"
         protocol: TCP
+      rules:
+        http:
+        - method: "GET"
+          path: "/test"

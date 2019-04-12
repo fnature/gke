@@ -11,4 +11,11 @@ spec:
   - fromEndpoints:
     - matchLabels:
         name: b
-
+    toPorts:
+    - ports:
+      - port: "80"
+        protocol: TCP
+      rules:
+        http:
+        - method: "GET"
+          path: "/test"
