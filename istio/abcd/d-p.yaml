@@ -18,18 +18,12 @@ spec:
       containers:
       - name: d
         image: fnature/ngnix-curl:1
+        ports:
+         - containerPort: 80
+           name: http
         volumeMounts:
           - name: html
             mountPath: /usr/share/nginx/html/
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 80
-          periodSeconds: 1
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 80
       volumes:
         - name: html
           configMap:
