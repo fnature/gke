@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+ name: worker-deployment
+ labels:
+   app: worker
+spec:
+ replicas: 1
+ selector:
+   matchLabels:
+     app: worker
+ template:
+   metadata:
+     labels:
+       app: worker
+       cluster-type: primary-cluster
+   spec:
+     containers:
+     - name: worker
+       image: gcr.io/istio-burst-workshop/worker
+       imagePullPolicy: Always
+       ports:
+       - containerPort: 8081
+       readinessProbe:
+           initialDelaySeconds: 10
+           httpGet:
+             path: "/_healthz"
+             port: 8081
+             httpHeaders:
+             - name: "Cookie"
+               value: "istio_session-id=x-readiness-probe"
+       livenessProbe:
+         initialDelaySeconds: 10
+         httpGet:
+           path: "/"
+           port: 8081
+           httpHeaders:
+           - name: "Cookie"
+             value: "istio_session-id=x-liveness-probe"
+       env:
+       - name: PORT
+         value: "8081"
+       - name: REDIS_URL
+         value: "redis-cache-service:6379"

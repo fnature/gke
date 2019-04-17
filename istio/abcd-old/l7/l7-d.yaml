@@ -1,0 +1,20 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+description: "L4 policy to restrict application a access to only containers in application a network"
+metadata:
+  name: "l4-d"
+spec:
+  endpointSelector:
+    matchLabels:
+      name: d
+  ingress:
+  - fromEndpoints:
+    - {}
+    toPorts:
+    - ports:
+      - port: "80"
+        protocol: TCP
+      rules:
+        http:
+        - method: "GET"
+          path: "/test"
