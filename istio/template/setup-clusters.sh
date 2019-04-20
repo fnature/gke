@@ -79,80 +79,26 @@ kubectl label namespace default istio-injection=enabled
 }
 
 
-function setup-istio-gw () {
-echo "------setup istio control plane in 1 cluster for multicluster with gateway connectivity"
-echo "based on https://istio.io/docs/setup/kubernetes/install/multicluster/gateways/"
+function setup-istio-master-vpn () {
+echo "--------setup istio controle plane for multicluster vpn config"
+echo "taken from https://istio.io/docs/examples/multicluster/gke/"
 
 cd $root
-cat install/kubernetes/helm/istio-init/files/crd-* > istio.yaml
-helm template install/kubernetes/helm/istio --name istio --namespace istio-system \
-    -f install/kubernetes/helm/istio/example-values/values-istio-multicluster-gateways.yaml >> istio.yaml
-
 kubectl config use-context "gke_${proj}_${zone}_$1"
-
-kubectl create namespace istio-system
-kubectl create secret generic cacerts -n istio-system \
-    --from-file=samples/certs/ca-cert.pem \
-    --from-file=samples/certs/ca-key.pem \
-    --from-file=samples/certs/root-cert.pem \
-    --from-file=samples/certs/cert-chain.pem
-
-kubectl apply -f istio.yaml
-
+cat install/kubernetes/helm/istio-init/files/crd-* > istio_master.yaml
+helm template install/kubernetes/helm/istio --name istio --namespace istio-system >> istio_master.yaml
+kubectl create ns istio-system
+kubectl apply -f istio_master.yaml
 kubectl label namespace default istio-injection=enabled
 
+echo "wait before setting up the remote istio"
 }
 
-function setup-dns-gw () {
-
-echo "creating DNS on $1"
-
-kubectl config use-context "gke_${proj}_${zone}_$1"
-kubectl apply -f - <<EOF
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: kube-dns
-  namespace: kube-system
-data:
-  stubDomains: |
-    {"global": ["$(kubectl get svc -n istio-system istiocoredns -o jsonpath={.spec.clusterIP})"]}
-EOF
-
-
-}
-
-
-function setup-istio-all-gw () {
-
-echo "------setup istio control plane in both clusters with gateway connectivity"
-echo "based on https://istio.io/docs/setup/kubernetes/install/multicluster/gateways/"
-
-setup-istio-gw "cluster-1"
-setup-istio-gw "cluster-2"
-
-setup-dns-gw "cluster-1"
-setup-dns-gw "cluster-2"
-
-}
-
-function setup-multicluster-gw () {
-echo "------setup 2 gke clusters based on istio multicluster with gateway connectivity"
-echo "based on https://istio.io/docs/setup/kubernetes/install/multicluster/gateways/"
-
-setup-clusters
-setup-istio-all-gw
-
-}
-
-
-
-function setup-istio-remote () {
+function setup-istio-remote-vpn () {
 
 echo "--------setup remote istio vpn config"
 echo "taken from https://istio.io/docs/setup/kubernetes/install/multicluster/vpn/"
-echo "you must wait istio control plane to be up"
-
+echo "you must wait istio control plane to be up before applying this config"
 
 cd $root
 echo "fetching cluster-1 ips"
@@ -222,6 +168,86 @@ kubectl create secret generic ${CLUSTER_NAME} --from-file ${KUBECFG_FILE} -n ${N
 kubectl label secret ${CLUSTER_NAME} istio/multiCluster=true -n ${NAMESPACE}
 
 
+
+}
+
+function setup-istio-all-vpn () {
+
+setup-istio-master-vpn "cluster-1" 
+setup-istio-istio-vpn
+
+}
+
+function setup-multicluster-vpn () {
+
+setup-clusters
+setup-istio-all-vpn
+
+}
+
+function setup-istio-gw () {
+echo "------setup istio control plane in 1 cluster for multicluster with gateway connectivity"
+echo "based on https://istio.io/docs/setup/kubernetes/install/multicluster/gateways/"
+
+cd $root
+cat install/kubernetes/helm/istio-init/files/crd-* > istio.yaml
+helm template install/kubernetes/helm/istio --name istio --namespace istio-system \
+    -f install/kubernetes/helm/istio/example-values/values-istio-multicluster-gateways.yaml >> istio.yaml
+
+kubectl config use-context "gke_${proj}_${zone}_$1"
+
+kubectl create namespace istio-system
+kubectl create secret generic cacerts -n istio-system \
+    --from-file=samples/certs/ca-cert.pem \
+    --from-file=samples/certs/ca-key.pem \
+    --from-file=samples/certs/root-cert.pem \
+    --from-file=samples/certs/cert-chain.pem
+
+kubectl apply -f istio.yaml
+
+kubectl label namespace default istio-injection=enabled
+
+}
+
+function setup-dns-gw () {
+
+echo "creating DNS on $1"
+
+kubectl config use-context "gke_${proj}_${zone}_$1"
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-dns
+  namespace: kube-system
+data:
+  stubDomains: |
+    {"global": ["$(kubectl get svc -n istio-system istiocoredns -o jsonpath={.spec.clusterIP})"]}
+EOF
+
+
+}
+
+
+function setup-istio-all-gw () {
+
+echo "------setup istio control plane in both clusters with gateway connectivity"
+echo "based on https://istio.io/docs/setup/kubernetes/install/multicluster/gateways/"
+
+setup-istio-gw "cluster-1"
+setup-istio-gw "cluster-2"
+
+setup-dns-gw "cluster-1"
+setup-dns-gw "cluster-2"
+
+}
+
+function setup-multicluster-gw () {
+echo "------setup 2 gke clusters based on istio multicluster with gateway connectivity"
+echo "based on https://istio.io/docs/setup/kubernetes/install/multicluster/gateways/"
+
+setup-clusters
+setup-istio-all-gw
 
 }
 
