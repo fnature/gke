@@ -134,3 +134,4 @@ alias gc="git commit -m 'CommitGKE'"
 alias gp='git push -u origin master'
 alias gitsaveall="git add * && git commit -m 'moi' && git push -u origin master"
 
+export PATH=${HOME}/.bin:${PATH}

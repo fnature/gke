@@ -20,4 +20,4 @@ tar xzf helm-v2.12.0-linux-amd64.tar.gz && \
 rm helm-v2.12.0-linux-amd64.tar.gz && \
 mv linux-amd64/helm ./helm && \
 rm -r linux-amd64 && \
-export PATH=${HOME}/.bin:${PATH}
+# add that to bashrc !! export PATH=${HOME}/.bin:${PATH}
