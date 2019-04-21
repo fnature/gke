@@ -251,14 +251,37 @@ setup-istio-all-gw
 
 }
 
+function get-gw-addr () {
+echo "we get the ip of  ingressgateway from both clusters"
+echo "based on https://istio.io/docs/examples/multicluster/gateways/"
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-1"
+
+export CLUSTER1_GW_ADDR=$(kubectl get svc --selector=app=istio-ingressgateway \
+    -n istio-system -o jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}')
+
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-2"
+
+export CLUSTER2_GW_ADDR=$(kubectl get  svc --selector=app=istio-ingressgateway \
+    -n istio-system -o jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}')
+}
+
+
 function add-serviceentry () {
+
+echo "---- we add the service entry $2 in $1"
+echo "--- the function requires get-gw-addr to be called before"
+
 
 kubectl config use-context "gke_${proj}_${zone}_$1"
 
 if [ $1 = "cluster-1" ]; then
 	othercluster=${CLUSTER2_GW_ADDR}
+	othercluster_label="cluster-2"
 else
-	othercluster=${CLUSTER1_GW_ADDR}	
+	othercluster=${CLUSTER1_GW_ADDR}
+        othercluster_label="cluster-1"
 fi
 
 echo "$2-default"
@@ -293,33 +316,82 @@ spec:
   # sits in front of sleep.foo service. Traffic from the sidecar will be
   # routed to this address.
   - address: $othercluster
+    labels:
+     cluster: $othercluster_label
     ports:
       http1: 15443 # Do not change this port value
 EOF
 
 
+
+
+
 }
 
-function setup-gw-addr () {
 
-echo "based on https://istio.io/docs/examples/multicluster/gateways/"
-
-kubectl config use-context "gke_${proj}_${zone}_cluster-1"
-
-export CLUSTER1_GW_ADDR=$(kubectl get svc --selector=app=istio-ingressgateway \
-    -n istio-system -o jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}')
-
-
-kubectl config use-context "gke_${proj}_${zone}_cluster-2"
-
-export CLUSTER2_GW_ADDR=$(kubectl get  svc --selector=app=istio-ingressgateway \
-    -n istio-system -o jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}')
-}
 
 
 function setup-routing-gw () {
 
 kubectl config use-context "gke_${proj}_${zone}_$1"
+
+if [ $1 = "cluster-1" ]; then
+	othercluster_label="cluster-2"
+else
+        othercluster_label="cluster-1"
+fi
+
+echo "------ we create the subsets for the global address"
+cat <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: $2-global
+spec:
+  host: $2-svc.default.global
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+  subsets:
+  - name: $2
+    labels:
+      cluster: $othercluster_label
+EOF
+
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: $2-global
+spec:
+  host: $2-svc.default.global
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+  subsets:
+  - name: $2
+    labels:
+      cluster: $othercluster_label
+
+EOF
+
+echo "------ we create the subsets for the local address"
+cat <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: $2
+spec:
+  host: $2-svc.default.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+  subsets:
+  - name: $2
+    labels:
+      name: $2
+EOF
+
 
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
@@ -337,6 +409,28 @@ spec:
       name: $2
 EOF
 
+echo "------ we create the routes for the local address"
+cat <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: $2
+spec:
+  hosts:
+    - $2-svc.default.svc.cluster.local
+  http:
+  - route:
+    - destination:
+        host: $2-svc.default.svc.cluster.local
+        subset: $2
+      weight: 50
+    - destination:
+        host: $2-svc.default.global
+        subset: $2
+      weight: 50
+EOF
+
+
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -353,7 +447,7 @@ spec:
       weight: 50
     - destination:
         host: $2-svc.default.global
-	subset: $2
+        subset: $2
       weight: 50
 EOF
 
@@ -362,8 +456,9 @@ EOF
 
 function setup-gw-ac () {
 
-setup-gw-addr
-add-serviceentry "cluster-1" "c-svc" "127.255.0.3"
+get-gw-addr
+
+add-serviceentry "cluster-1" "c-svc" "127.255.0.23"
 
 add-serviceentry "cluster-2" "a-svc" "127.255.0.13"
 add-serviceentry "cluster-2" "c-svc" "123.255.0.14"
