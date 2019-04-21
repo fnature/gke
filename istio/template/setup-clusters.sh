@@ -251,6 +251,126 @@ setup-istio-all-gw
 
 }
 
+function add-serviceentry () {
+
+kubectl config use-context "gke_${proj}_${zone}_$1"
+
+if [ $1 = "cluster-1" ]; then
+	othercluster=${CLUSTER2_GW_ADDR}
+else
+	othercluster=${CLUSTER1_GW_ADDR}	
+fi
+
+echo "$2-default"
+echo $3
+echo "$othercluster"
+
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: $2-default
+spec:
+  hosts:
+  # must be of form name.namespace.global
+  - $2.default.global
+  # Treat remote cluster services as part of the service mesh
+  # as all clusters in the service mesh share the same root of trust.
+  location: MESH_INTERNAL
+  ports:
+  - name: http1
+    number: 80
+    protocol: http
+  resolution: DNS
+  addresses:
+  # the IP address to which httpbin.bar.global will resolve to
+  # must be unique for each remote service, within a given cluster.
+  # This address need not be routable. Traffic for this IP will be captured
+  # by the sidecar and routed appropriately.
+  - $3
+  endpoints:
+  # This is the routable address of the ingress gateway in cluster2 that
+  # sits in front of sleep.foo service. Traffic from the sidecar will be
+  # routed to this address.
+  - address: $othercluster
+    ports:
+      http1: 15443 # Do not change this port value
+EOF
+
+
+}
+
+function setup-gw-addr () {
+
+echo "based on https://istio.io/docs/examples/multicluster/gateways/"
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-1"
+
+export CLUSTER1_GW_ADDR=$(kubectl get svc --selector=app=istio-ingressgateway \
+    -n istio-system -o jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}')
+
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-2"
+
+export CLUSTER2_GW_ADDR=$(kubectl get  svc --selector=app=istio-ingressgateway \
+    -n istio-system -o jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}')
+}
+
+
+function setup-routing-gw () {
+
+kubectl config use-context "gke_${proj}_${zone}_$1"
+
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: $2
+spec:
+  host: $2-svc.default.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+  subsets:
+  - name: $2
+    labels:
+      name: $2
+EOF
+
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: $2
+spec:
+  hosts:
+    - $2-svc.default.svc.cluster.local
+  http:
+  - route:
+    - destination:
+        host: $2-svc.default.svc.cluster.local
+        subset: $2
+      weight: 50
+    - destination:
+        host: $2-svc.default.global
+	subset: $2
+      weight: 50
+EOF
+
+
+}
+
+function setup-gw-ac () {
+
+setup-gw-addr
+add-serviceentry "cluster-1" "c-svc" "127.255.0.3"
+
+add-serviceentry "cluster-2" "a-svc" "127.255.0.13"
+add-serviceentry "cluster-2" "c-svc" "123.255.0.14"
+
+setup-routing-gw "cluster-1" "c"
+setup-routing-gw "cluster-2" "c"
+}
 
 
 #  
