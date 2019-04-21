@@ -454,15 +454,17 @@ EOF
 
 }
 
-function setup-gw-ac () {
+function setup-gw-c () {
 
+#  apply the deployments manually for testbed : res-clustx, and svc in each clusters
+#  then below is that c shared in cluster-1 and cluster-2
+
+#  I want to have remote c available from both clusters
 get-gw-addr
-
 add-serviceentry "cluster-1" "c-svc" "127.255.0.23"
+add-serviceentry "cluster-2" "c-svc" "123.255.0.13"
 
-add-serviceentry "cluster-2" "a-svc" "127.255.0.13"
-add-serviceentry "cluster-2" "c-svc" "123.255.0.14"
-
+#  I want to load balance c across clusters
 setup-routing-gw "cluster-1" "c"
 setup-routing-gw "cluster-2" "c"
 }
