@@ -55,7 +55,11 @@ gcloud compute firewall-rules create istio-multicluster-test-pods \
 }
 
 function setup-clusters () {
+# test that not sure if it works !! 
+echo "usage :  setup-clusters nameofthezone"
+echo "if no zone specified, default is us-east1-b"
 
+zone=${1:-"us-east1-b"} 
 setup-cluster "cluster-1"
 setup-cluster "cluster-2"
 
@@ -174,7 +178,7 @@ kubectl label secret ${CLUSTER_NAME} istio/multiCluster=true -n ${NAMESPACE}
 function setup-istio-all-vpn () {
 
 setup-istio-master-vpn "cluster-1" 
-setup-istio-istio-vpn
+setup-istio-remote-vpn
 
 }
 

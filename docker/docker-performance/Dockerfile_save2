@@ -1,0 +1,4 @@
+FROM docker.io/nginx:1.15.8
+RUN apt-get update && apt-get install -y --no-install-recommends curl
+RUN wget https://github.com/tsenart/vegeta/releases/download/cli%2Fv12.3.0/vegeta-12.3.0-linux-amd64.tar.gz 
+RUN tar xzvf vegeta-12.3.0-linux-amd64.tar.gz 

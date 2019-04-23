@@ -1,0 +1,6 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: res-clust1
+data:
+  message: "{ \"Hello from Cluster-1\"}\n"

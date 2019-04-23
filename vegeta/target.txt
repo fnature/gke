@@ -1,1 +1,1 @@
-GET http://www.google.com
+GET http://c-svc
