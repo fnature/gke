@@ -41,7 +41,8 @@ kubectl -n cilium apply -f https://raw.githubusercontent.com/cilium/cilium/v1.4/
 
 kubectl -n kube-system delete pod -l k8s-app=kube-dns
 
-kubectl apply -f https://raw.githubusercontent.com/cilium/cilium/v1.4/examples/kubernetes/1.11/cilium-with-node-init.yaml
+#kubectl apply -f https://raw.githubusercontent.com/cilium/cilium/v1.4/examples/kubernetes/1.11/cilium-with-node-init.yaml
+kubectl apply -f https://raw.githubusercontent.com/cilium/cilium/v1.4/examples/kubernetes/1.12/cilium-with-node-init.yaml
 
 kubectl delete pods -n kube-system $(kubectl get pods -n kube-system -o custom-columns=NAME:.metadata.name,HOSTNETWORK:.spec.hostNetwork --no-headers=true | grep '<none>' | awk '{ print $1 }')
 }
