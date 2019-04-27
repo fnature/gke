@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: c
-        image: docker.io/nginx:1.15.8
+        image: fnature/ngnix-curl:2
         volumeMounts:
           - name: html
             mountPath: /usr/share/nginx/html/

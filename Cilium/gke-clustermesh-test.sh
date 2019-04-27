@@ -20,8 +20,13 @@ cd $CLUSTER1$CLUSTER2
 
 # Creation of clusters
 
-gcloud container clusters create ${CLUSTER1} --username "admin" --image-type COS --num-nodes 2 --zone ${GKE_ZONE} --enable-ip-alias --cluster-version=1.12.6-gke.10 
-gcloud container clusters create ${CLUSTER2} --username "admin" --image-type COS --num-nodes 2 --zone ${GKE_ZONE} --enable-ip-alias --cluster-version=1.12.6-gke.10 
+# gcloud container clusters create ${CLUSTER1} --username "admin" --image-type COS --num-nodes 2 --zone ${GKE_ZONE} --enable-ip-alias --cluster-version=1.12.6-gke.10 
+# gcloud container clusters create ${CLUSTER2} --username "admin" --image-type COS --num-nodes 2 --zone ${GKE_ZONE} --enable-ip-alias --cluster-version=1.12.6-gke.10 
+
+# Following testbed to test performance 
+gcloud container clusters create ${CLUSTER1} --username "admin" --image-type COS --num-nodes 4 --zone ${GKE_ZONE} --enable-ip-alias --cluster-version latest --machine-type "n1-standard-2" 
+gcloud container clusters create ${CLUSTER2} --username "admin" --image-type COS --num-nodes 4 --zone ${GKE_ZONE} --enable-ip-alias --cluster-version latest --machine-type "n1-standard-2"
+
 
 # kubectx alias
 
