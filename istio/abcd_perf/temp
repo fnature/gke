@@ -1,6 +1,7 @@
 NAME                 READY   STATUS    RESTARTS   AGE     IP          NODE                                       NOMINATED NODE
-a-5969c58454-625sb   1/2     Running   0          2m27s   10.8.1.10   gke-cluster-1-default-pool-6bafa6b4-9rdr   <none>
-a-5969c58454-8x4ng   1/2     Running   0          2m27s   10.8.2.9    gke-cluster-1-default-pool-6bafa6b4-4h53   <none>
-a-5969c58454-9l8n8   1/2     Running   0          2m27s   10.8.3.6    gke-cluster-1-default-pool-6bafa6b4-r4rl   <none>
-a-5969c58454-vm5j4   1/2     Running   0          2m27s   10.8.0.10   gke-cluster-1-default-pool-6bafa6b4-9ck6   <none>
-c-54bb6cfb58-lgnh9   2/2     Running   0          2m25s   10.8.2.10   gke-cluster-1-default-pool-6bafa6b4-4h53   <none>
+a-5969c58454-625sb   1/2     Running   0          19m     10.8.1.10   gke-cluster-1-default-pool-6bafa6b4-9rdr   <none>
+a-5969c58454-8x4ng   1/2     Running   0          19m     10.8.2.9    gke-cluster-1-default-pool-6bafa6b4-4h53   <none>
+a-5969c58454-9l8n8   1/2     Running   0          19m     10.8.3.6    gke-cluster-1-default-pool-6bafa6b4-r4rl   <none>
+a-5969c58454-vm5j4   1/2     Running   0          19m     10.8.0.10   gke-cluster-1-default-pool-6bafa6b4-9ck6   <none>
+c-54bb6cfb58-2t2zq   2/2     Running   0          3m20s   10.8.0.11   gke-cluster-1-default-pool-6bafa6b4-9ck6   <none>
+c-54bb6cfb58-nnlzg   2/2     Running   0          3m21s   10.8.1.11   gke-cluster-1-default-pool-6bafa6b4-9rdr   <none>
