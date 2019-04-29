@@ -1,0 +1,50 @@
+Requests      [total, rate]            30000, 1000.03
+Duration      [total, attack, wait]    29.999481067s, 29.999100896s, 380.171µs
+Latencies     [mean, 50, 95, 99, max]  407.965µs, 344.923µs, 600.092µs, 1.851887ms, 19.069941ms
+Bytes In      [total, mean]            780000, 26.00
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:30000  
+Error Set:
+Requests      [total, rate]            45000, 1500.03
+Duration      [total, attack, wait]    29.999829093s, 29.999441073s, 388.02µs
+Latencies     [mean, 50, 95, 99, max]  404.13µs, 324.831µs, 793.096µs, 1.991485ms, 16.842857ms
+Bytes In      [total, mean]            1170000, 26.00
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:45000  
+Error Set:
+Requests      [total, rate]            60000, 2000.03
+Duration      [total, attack, wait]    29.999900012s, 29.999597504s, 302.508µs
+Latencies     [mean, 50, 95, 99, max]  401.357µs, 314.857µs, 757.184µs, 2.299541ms, 73.565007ms
+Bytes In      [total, mean]            1560000, 26.00
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:60000  
+Error Set:
+Requests      [total, rate]            75000, 2500.03
+Duration      [total, attack, wait]    30.00001002s, 29.999695396s, 314.624µs
+Latencies     [mean, 50, 95, 99, max]  474.094µs, 315.663µs, 1.013321ms, 2.986501ms, 212.14775ms
+Bytes In      [total, mean]            1950000, 26.00
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:75000  
+Error Set:
+Requests      [total, rate]            90000, 2692.98
+Duration      [total, attack, wait]    46.717004193s, 33.420274468s, 13.296729725s
+Latencies     [mean, 50, 95, 99, max]  1.543268872s, 338.454µs, 13.66888412s, 19.953710272s, 22.228941318s
+Bytes In      [total, mean]            2182180, 24.25
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  93.26%
+Status Codes  [code:count]             0:6070  200:83930  
+Error Set:
+Get http://c-svc-g: EOF
+Get http://c-svc-g: http: server closed idle connection
+Requests      [total, rate]            15000, 500.03
+Duration      [total, attack, wait]    29.99843853s, 29.997980714s, 457.816µs
+Latencies     [mean, 50, 95, 99, max]  455.594µs, 409.825µs, 573.932µs, 1.737112ms, 15.567389ms
+Bytes In      [total, mean]            390000, 26.00
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:15000  
+Error Set:

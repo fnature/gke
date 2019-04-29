@@ -1,0 +1,48 @@
+Requests      [total, rate]            30000, 1000.03
+Duration      [total, attack, wait]    29.999695213s, 29.999084915s, 610.298µs
+Latencies     [mean, 50, 95, 99, max]  702.98µs, 576.997µs, 1.397065ms, 3.251358ms, 10.868847ms
+Bytes In      [total, mean]            780000, 26.00
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:30000  
+Error Set:
+Requests      [total, rate]            45000, 1500.03
+Duration      [total, attack, wait]    29.999821257s, 29.999338374s, 482.883µs
+Latencies     [mean, 50, 95, 99, max]  702.153µs, 537.301µs, 1.487808ms, 3.908461ms, 16.918149ms
+Bytes In      [total, mean]            1170000, 26.00
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:45000  
+Error Set:
+Requests      [total, rate]            60000, 2000.03
+Duration      [total, attack, wait]    30.000282087s, 29.999608418s, 673.669µs
+Latencies     [mean, 50, 95, 99, max]  765.055µs, 571.567µs, 1.887147ms, 4.64403ms, 24.177854ms
+Bytes In      [total, mean]            1560000, 26.00
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:60000  
+Error Set:
+Requests      [total, rate]            75000, 2500.03
+Duration      [total, attack, wait]    30.000294399s, 29.999601986s, 692.413µs
+Latencies     [mean, 50, 95, 99, max]  808.846µs, 565.258µs, 2.155884ms, 5.396811ms, 26.828717ms
+Bytes In      [total, mean]            1950000, 26.00
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:75000  
+Error Set:
+Requests      [total, rate]            90000, 2999.95
+Duration      [total, attack, wait]    30.002102768s, 30.00051936s, 1.583408ms
+Latencies     [mean, 50, 95, 99, max]  992.344µs, 552.287µs, 3.166041ms, 7.522362ms, 215.287361ms
+Bytes In      [total, mean]            2340000, 26.00
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:90000  
+Error Set:
+Requests      [total, rate]            15000, 500.03
+Duration      [total, attack, wait]    29.998740975s, 29.998134051s, 606.924µs
+Latencies     [mean, 50, 95, 99, max]  775.578µs, 683.517µs, 1.17137ms, 2.851509ms, 10.651324ms
+Bytes In      [total, mean]            390000, 26.00
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:15000  
+Error Set:

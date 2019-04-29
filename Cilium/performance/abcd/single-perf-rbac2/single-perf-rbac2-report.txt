@@ -1,0 +1,58 @@
+Requests      [total, rate]            30000, 1000.01
+Duration      [total, attack, wait]    30.002436732s, 29.999701347s, 2.735385ms
+Latencies     [mean, 50, 95, 99, max]  20.9085ms, 1.90332ms, 127.206893ms, 218.124563ms, 389.323912ms
+Bytes In      [total, mean]            780000, 26.00
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:30000  
+Error Set:
+Requests      [total, rate]            45000, 1500.00
+Duration      [total, attack, wait]    31.36679677s, 29.999928169s, 1.366868601s
+Latencies     [mean, 50, 95, 99, max]  1.422787268s, 1.285911779s, 2.90471587s, 3.459298558s, 4.444303602s
+Bytes In      [total, mean]            1263220, 28.07
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  96.56%
+Status Codes  [code:count]             200:43454  503:1546  
+Error Set:
+503 Service Unavailable
+Requests      [total, rate]            60000, 2000.05
+Duration      [total, attack, wait]    33.80062436s, 29.999261208s, 3.801363152s
+Latencies     [mean, 50, 95, 99, max]  2.539238617s, 2.062280601s, 5.683774201s, 8.132220014s, 27.739672432s
+Bytes In      [total, mean]            3127629, 52.13
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  52.81%
+Status Codes  [code:count]             200:31685  503:28315  
+Error Set:
+503 Service Unavailable
+Requests      [total, rate]            75000, 1195.28
+Duration      [total, attack, wait]    1m50.711492691s, 1m2.746545802s, 47.964946889s
+Latencies     [mean, 50, 95, 99, max]  29.439035532s, 32.863671271s, 52.246237482s, 1m11.385835888s, 1m14.472684302s
+Bytes In      [total, mean]            3411898, 45.49
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  39.84%
+Status Codes  [code:count]             0:12680  200:29880  503:32440  
+Error Set:
+503 Service Unavailable
+Get http://c-svc: dial tcp 0.0.0.0:0->10.20.12.42:80: bind: address already in use
+Get http://c-svc: net/http: timeout awaiting response headers
+Get http://c-svc: dial tcp 0.0.0.0:0->10.20.12.42:80: i/o timeout
+Requests      [total, rate]            90000, 843.78
+Duration      [total, attack, wait]    2m21.560041605s, 1m46.662539278s, 34.897502327s
+Latencies     [mean, 50, 95, 99, max]  29.838939999s, 32.393843033s, 1m1.747447673s, 1m2.429511155s, 1m18.881804202s
+Bytes In      [total, mean]            4014159, 44.60
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  34.36%
+Status Codes  [code:count]             0:19513  200:30926  503:39561  
+Error Set:
+Get http://c-svc: dial tcp 0.0.0.0:0->10.20.12.42:80: bind: address already in use
+503 Service Unavailable
+Get http://c-svc: dial tcp 0.0.0.0:0->10.20.12.42:80: i/o timeout
+Get http://c-svc: net/http: timeout awaiting response headers
+Requests      [total, rate]            15000, 500.03
+Duration      [total, attack, wait]    29.998877643s, 29.998076298s, 801.345µs
+Latencies     [mean, 50, 95, 99, max]  2.950975ms, 855.032µs, 8.284257ms, 54.369507ms, 231.522975ms
+Bytes In      [total, mean]            390000, 26.00
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:15000  
+Error Set:
