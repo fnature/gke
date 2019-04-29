@@ -178,6 +178,7 @@ kubectl label secret ${CLUSTER_NAME} istio/multiCluster=true -n ${NAMESPACE}
 function setup-istio-all-vpn () {
 
 setup-istio-master-vpn "cluster-1" 
+sleep 10m
 setup-istio-remote-vpn
 
 }
