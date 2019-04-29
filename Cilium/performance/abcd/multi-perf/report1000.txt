@@ -1,8 +1,9 @@
-Requests      [total, rate]            30000, 1000.02
-Duration      [total, attack, wait]    30.000958611s, 29.999403349s, 1.555262ms
-Latencies     [mean, 50, 95, 99, max]  567.609µs, 378.182µs, 1.366923ms, 4.464098ms, 20.971739ms
-Bytes In      [total, mean]            780000, 26.00
+Requests      [total, rate]            30000, 999.98
+Duration      [total, attack, wait]    30.00545466s, 30.000715748s, 4.738912ms
+Latencies     [mean, 50, 95, 99, max]  174.086681ms, 410.881µs, 1.315057589s, 5.244820385s, 5.822119514s
+Bytes In      [total, mean]            702858, 23.43
 Bytes Out     [total, mean]            0, 0.00
-Success       [ratio]                  100.00%
-Status Codes  [code:count]             200:30000  
+Success       [ratio]                  90.11%
+Status Codes  [code:count]             0:2967  200:27033  
 Error Set:
+Get http://c-svc-g: EOF

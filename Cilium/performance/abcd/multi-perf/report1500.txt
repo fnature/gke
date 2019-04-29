@@ -1,10 +1,8 @@
-Requests      [total, rate]            45000, 1342.13
-Duration      [total, attack, wait]    1m37.944406707s, 33.528692684s, 1m4.415714023s
-Latencies     [mean, 50, 95, 99, max]  20.417298805s, 7.25867358s, 1m13.74021434s, 1m25.139518329s, 1m32.648376903s
-Bytes In      [total, mean]            935922, 20.80
+Requests      [total, rate]            45000, 1500.03
+Duration      [total, attack, wait]    29.999779899s, 29.999418098s, 361.801µs
+Latencies     [mean, 50, 95, 99, max]  546.342µs, 348.053µs, 1.532158ms, 4.195911ms, 15.283562ms
+Bytes In      [total, mean]            1170000, 26.00
 Bytes Out     [total, mean]            0, 0.00
-Success       [ratio]                  79.99%
-Status Codes  [code:count]             0:9003  200:35997  
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:45000  
 Error Set:
-Get http://c-svc-g: EOF
-Get http://c-svc-g: http: server closed idle connection

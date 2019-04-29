@@ -1,18 +1,8 @@
-Requests      [total, rate]            75000, 2428.10
-Duration      [total, attack, wait]    33.358957548s, 30.888399883s, 2.470557665s
-Latencies     [mean, 50, 95, 99, max]  193.390594ms, 341.345µs, 191.375249ms, 6.227502972s, 8.297144069s
-Bytes In      [total, mean]            1707524, 22.77
+Requests      [total, rate]            75000, 2500.03
+Duration      [total, attack, wait]    29.999964401s, 29.999631728s, 332.673µs
+Latencies     [mean, 50, 95, 99, max]  628.895µs, 325.882µs, 1.925684ms, 5.484985ms, 19.494054ms
+Bytes In      [total, mean]            1950000, 26.00
 Bytes Out     [total, mean]            0, 0.00
-Success       [ratio]                  87.57%
-Status Codes  [code:count]             0:9326  200:65674  
+Success       [ratio]                  100.00%
+Status Codes  [code:count]             200:75000  
 Error Set:
-Get http://c-svc: EOF
-Get http://c-svc: http: server closed idle connection
-Get http://c-svc: read tcp 10.16.1.102:58223->10.20.1.195:80: read: connection reset by peer
-Get http://c-svc: read tcp 10.16.1.102:57717->10.20.1.195:80: read: connection reset by peer
-Get http://c-svc: read tcp 10.16.1.102:40805->10.20.1.195:80: read: connection reset by peer
-Get http://c-svc: read tcp 10.16.1.102:58435->10.20.1.195:80: read: connection reset by peer
-Get http://c-svc: read tcp 10.16.1.102:37501->10.20.1.195:80: read: connection reset by peer
-Get http://c-svc: read tcp 10.16.1.102:33067->10.20.1.195:80: read: connection reset by peer
-Get http://c-svc: read tcp 10.16.1.102:51211->10.20.1.195:80: read: connection reset by peer
-Get http://c-svc: read tcp 10.16.1.102:58249->10.20.1.195:80: read: connection reset by peer

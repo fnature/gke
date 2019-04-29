@@ -1,0 +1,9 @@
+Requests      [total, rate]            60000, 2000.05
+Duration      [total, attack, wait]    33.80062436s, 29.999261208s, 3.801363152s
+Latencies     [mean, 50, 95, 99, max]  2.539238617s, 2.062280601s, 5.683774201s, 8.132220014s, 27.739672432s
+Bytes In      [total, mean]            3127629, 52.13
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  52.81%
+Status Codes  [code:count]             200:31685  503:28315  
+Error Set:
+503 Service Unavailable
