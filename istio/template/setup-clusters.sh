@@ -2,7 +2,7 @@
 
 
 export proj=$(gcloud config get-value project)
-export zone="us-east1-b"
+export zone="europe-west2-a"
 
 root="/home/ed_mitchell/myscript/istio/istio-1.1.2"
 # cd $root
