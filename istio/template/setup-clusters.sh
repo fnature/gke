@@ -347,22 +347,6 @@ else
 fi
 
 echo "------ we create the subsets for the global address"
-cat <<EOF
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: $2-global
-spec:
-  host: $2-svc.default.global
-  trafficPolicy:
-    tls:
-      mode: ISTIO_MUTUAL
-  subsets:
-  - name: $2
-    labels:
-      cluster: $othercluster_label
-EOF
-
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
@@ -381,23 +365,6 @@ spec:
 EOF
 
 echo "------ we create the subsets for the local address"
-cat <<EOF
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: $2
-spec:
-  host: $2-svc.default.svc.cluster.local
-  trafficPolicy:
-    tls:
-      mode: ISTIO_MUTUAL
-  subsets:
-  - name: $2
-    labels:
-      name: $2
-EOF
-
-
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
@@ -415,27 +382,6 @@ spec:
 EOF
 
 echo "------ we create the routes for the local address"
-cat <<EOF
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: $2
-spec:
-  hosts:
-    - $2-svc.default.svc.cluster.local
-  http:
-  - route:
-    - destination:
-        host: $2-svc.default.svc.cluster.local
-        subset: $2
-      weight: 50
-    - destination:
-        host: $2-svc.default.global
-        subset: $2
-      weight: 50
-EOF
-
-
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -459,7 +405,9 @@ EOF
 
 }
 
-function setup-routing-discovery-gw() {
+
+function setup-routing-discovery-gw () {
+# The aim is to be able to curl x-svc to remote cluster.
 
 kubectl config use-context "gke_${proj}_${zone}_$1"
 
@@ -470,21 +418,7 @@ else
 fi
 
 echo "------ we create the subsets for the global address"
-cat <<EOF
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: $2-global
-spec:
-  host: $2-svc.default.global
-  trafficPolicy:
-    tls:
-      mode: ISTIO_MUTUAL
-  subsets:
-  - name: $2
-    labels:
-      cluster: $othercluster_label
-EOF
+
 
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
@@ -502,22 +436,25 @@ spec:
       cluster: $othercluster_label
 EOF
 
+echo "------ we create the subsets for the local address"
+
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: $2
+spec:
+  host: $2-svc.default.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+  subsets:
+  - name: $2
+    labels:
+      name: $2
+EOF
 
 echo "------ we create the routes for the local address"
-cat <<EOF
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: $2
-spec:
-  hosts:
-    - $2-svc.default.svc.cluster.local
-  http:
-  - route:
-    - destination:
-        host: $2-svc.default.global
-        subset: $2
-EOF
 
 
 kubectl apply -f - <<EOF
@@ -531,8 +468,13 @@ spec:
   http:
   - route:
     - destination:
+        host: $2-svc.default.svc.cluster.local
+        subset: $2
+      weight: 0
+    - destination:
         host: $2-svc.default.global
         subset: $2
+      weight: 100
 EOF
 
 
@@ -569,6 +511,7 @@ k apply -f b-p.yaml
 k apply -f a-svc-http.yaml
 k apply -f b-svc-http.yaml
 
+
 setup-discovery-gw "c" "cluster-1" "172.255.0.15"
 setup-discovery-gw "d" "cluster-1" "172.255.0.16"
 
@@ -579,6 +522,7 @@ k apply -f c-b.yaml
 k apply -f d-b.yaml
 k apply -f c-svc-http.yaml
 k apply -f d-svc-http.yaml
+
 
 setup-discovery-gw "a" "cluster-2" "172.255.0.17"
 setup-discovery-gw "b" "cluster-2" "172.255.0.18"
@@ -652,9 +596,12 @@ k apply -f a-svc-http.yaml
 k apply -f c-svc-http.yaml
 k apply -f d-svc-http.yaml
 
+k apply -f b-p.yaml
+k apply -f b-svc-http.yaml
+
 kubectl config use-context "gke_${proj}_${zone}_cluster-2"
 k apply -f res-clust2.yaml
-k apply -f b-p.yaml
+k apply -f b-b.yaml
 k apply -f c-b.yaml
 k apply -f d-b.yaml
 k apply -f b-svc-http.yaml
