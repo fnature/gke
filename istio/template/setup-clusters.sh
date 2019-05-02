@@ -638,6 +638,35 @@ setup-routing-lb-gw "cluster-1" "d"
 setup-routing-lb-gw "cluster-2" "d"
 }
 
+
+
+function setup-testbed-rbac-shared-gw {
+# this works ok
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-1"
+k apply -f res-clust1.yaml
+k apply -f a-p.yaml
+k apply -f c-p.yaml
+k apply -f d-p.yaml
+k apply -f a-svc-http.yaml
+k apply -f c-svc-http.yaml
+k apply -f d-svc-http.yaml
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-2"
+k apply -f res-clust2.yaml
+k apply -f b-p.yaml
+k apply -f c-b.yaml
+k apply -f d-b.yaml
+k apply -f b-svc-http.yaml
+k apply -f c-svc-http.yaml
+k apply -f d-svc-http.yaml
+
+setup-lb-c
+setup-lb-d
+}
+
+
+
 #  
 #setup-cluster "cluster-1"
 #setup-cluster "cluster-2"
