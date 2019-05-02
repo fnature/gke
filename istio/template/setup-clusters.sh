@@ -540,6 +540,74 @@ EOF
 
 
 
+
+function setup-discovery-gw {
+#  This setup is not working
+
+echo "function makes remote service $1 discoverable from cluster $2 with ip $3"
+echo 'example of use : setup-discovery-gw "b" "cluster-1" "172.255.0.15"'
+
+echo "we recall the addresses of istio ingressgateways"
+get-gw-addr
+
+echo "We add the service entry in cluster $2 so DNS works.."
+add-serviceentry $2 "$1-svc" $3
+
+echo "We setup routing so that $1-svc is translated to $1.default.global"
+setup-routing-discovery-gw $2 $1
+}
+
+
+function setup-testbed-rbac-noneshared-gw {
+#  This setup is not working
+#  we can't curl across clusters with service name x-svc, only with x-svc.default.global
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-1"
+k apply -f res-clust1.yaml
+k apply -f a-p.yaml
+k apply -f b-p.yaml
+k apply -f a-svc-http.yaml
+k apply -f b-svc-http.yaml
+
+setup-discovery-gw "c" "cluster-1" "172.255.0.15"
+setup-discovery-gw "d" "cluster-1" "172.255.0.16"
+
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-2"
+k apply -f res-clust2.yaml
+k apply -f c-b.yaml
+k apply -f d-b.yaml
+k apply -f c-svc-http.yaml
+k apply -f d-svc-http.yaml
+
+setup-discovery-gw "a" "cluster-2" "172.255.0.17"
+setup-discovery-gw "b" "cluster-2" "172.255.0.18"
+}
+
+function clean-testbed-gw {
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-1"
+k delete deployment --all
+k delete svc --all
+k delete virtualservice --all
+k delete destinationrule --all
+k delete serviceentry --all
+k delete serviceaccount --all
+
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-2"
+k delete deployment --all
+k delete svc --all
+k delete virtualservice --all
+k delete destinationrule --all
+k delete serviceentry --all
+k delete serviceaccount --all
+}
+
+
+
+
+
 function setup-lb-c () {
 
 #  apply the deployments manually for testbed : res-clustx, and svc in each clusters
