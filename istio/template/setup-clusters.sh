@@ -584,6 +584,25 @@ setup-routing-lb-gw "cluster-2" "d"
 
 
 
+
+function setup-discovery-cluster1tob () {
+
+#  apply the deployments manually for testbed : res-clustx, and svc in each clusters
+#  then below is that c shared in cluster-1 and cluster-2
+
+#  I want to have remote c available from both clusters
+get-gw-addr
+add-serviceentry "cluster-1" "b-svc" "127.255.0.25"
+add-serviceentry "cluster-2" "b-svc" "123.255.0.15"
+
+#  I want to load balance c across clusters
+setup-routing-discovery-gw "cluster-1" "b"
+setup-routing-discovery-gw "cluster-2" "b"
+
+}
+
+
+
 function setup-testbed-rbac-shared-gw {
 # this works ok
 
@@ -596,7 +615,7 @@ k apply -f a-svc-http.yaml
 k apply -f c-svc-http.yaml
 k apply -f d-svc-http.yaml
 
-k apply -f b-p.yaml
+# we need the service b in cluster-1. Issue is that istio doesn't resolve b-svc to b-svc.default.global 
 k apply -f b-svc-http.yaml
 
 kubectl config use-context "gke_${proj}_${zone}_cluster-2"
@@ -610,6 +629,9 @@ k apply -f d-svc-http.yaml
 
 setup-lb-c
 setup-lb-d
+setup-discovery-cluster1tob
+
+
 }
 
 
