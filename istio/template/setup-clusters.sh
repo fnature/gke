@@ -57,9 +57,9 @@ gcloud compute firewall-rules create istio-multicluster-test-pods \
 function setup-clusters () {
 # test that not sure if it works !! 
 echo "usage :  setup-clusters nameofthezone"
-echo "if no zone specified, default is us-east1-b"
+echo "if no zone specified, default is europe-west2-a"
 
-zone=${1:-"us-east1-b"} 
+zone=${1:-"europe-west2-a"} 
 setup-cluster "cluster-1"
 setup-cluster "cluster-2"
 
@@ -336,7 +336,7 @@ EOF
 
 
 
-function setup-routing-gw () {
+function setup-routing-lb-gw () {
 
 kubectl config use-context "gke_${proj}_${zone}_$1"
 
@@ -459,7 +459,88 @@ EOF
 
 }
 
-function setup-gw-c () {
+function setup-routing-discovery-gw() {
+
+kubectl config use-context "gke_${proj}_${zone}_$1"
+
+if [ $1 = "cluster-1" ]; then
+	othercluster_label="cluster-2"
+else
+        othercluster_label="cluster-1"
+fi
+
+echo "------ we create the subsets for the global address"
+cat <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: $2-global
+spec:
+  host: $2-svc.default.global
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+  subsets:
+  - name: $2
+    labels:
+      cluster: $othercluster_label
+EOF
+
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: $2-global
+spec:
+  host: $2-svc.default.global
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+  subsets:
+  - name: $2
+    labels:
+      cluster: $othercluster_label
+EOF
+
+
+echo "------ we create the routes for the local address"
+cat <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: $2
+spec:
+  hosts:
+    - $2-svc.default.svc.cluster.local
+  http:
+  - route:
+    - destination:
+        host: $2-svc.default.global
+        subset: $2
+EOF
+
+
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: $2
+spec:
+  hosts:
+    - $2-svc.default.svc.cluster.local
+  http:
+  - route:
+    - destination:
+        host: $2-svc.default.global
+        subset: $2
+EOF
+
+
+}
+
+
+
+function setup-lb-c () {
 
 #  apply the deployments manually for testbed : res-clustx, and svc in each clusters
 #  then below is that c shared in cluster-1 and cluster-2
@@ -470,10 +551,24 @@ add-serviceentry "cluster-1" "c-svc" "127.255.0.23"
 add-serviceentry "cluster-2" "c-svc" "123.255.0.13"
 
 #  I want to load balance c across clusters
-setup-routing-gw "cluster-1" "c"
-setup-routing-gw "cluster-2" "c"
+setup-routing-lb-gw "cluster-1" "c"
+setup-routing-lb-gw "cluster-2" "c"
 }
 
+function setup-lb-d () {
+
+#  apply the deployments manually for testbed : res-clustx, and svc in each clusters
+#  then below is that c shared in cluster-1 and cluster-2
+
+#  I want to have remote c available from both clusters
+get-gw-addr
+add-serviceentry "cluster-1" "d-svc" "127.255.0.24"
+add-serviceentry "cluster-2" "d-svc" "123.255.0.14"
+
+#  I want to load balance c across clusters
+setup-routing-lb-gw "cluster-1" "d"
+setup-routing-lb-gw "cluster-2" "d"
+}
 
 #  
 #setup-cluster "cluster-1"
