@@ -605,8 +605,10 @@ setup-routing-discovery-gw "cluster-2" "b"
 function setup-discovery-cluster2toa () {
 #  I want to have remote a available from cluster-2
 get-gw-addr
+add-serviceentry "cluster-1" "a-svc" "127.255.0.26"
 add-serviceentry "cluster-2" "a-svc" "123.255.0.16"
 
+setup-routing-discovery-gw "cluster-1" "a"
 setup-routing-discovery-gw "cluster-2" "a"
 
 }
@@ -643,8 +645,27 @@ k apply -f d-svc-http.yaml
 # the following configures the necessary service entries and routing rules for this testbed
 setup-lb-c
 setup-lb-d
-# setup-discovery-cluster1tob
+setup-discovery-cluster1tob
 setup-discovery-cluster2toa
+
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-1"
+# allows all to access d
+k apply -f role-http-d-gw.yaml 
+# allows a to access c
+k apply -f role-http-a-c-gw.yaml 
+# allows c to access a
+k apply -f role-http-c-a-gw.yaml 
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-2"
+# allows all to access d
+k apply -f role-http-d-gw.yaml 
+# allows a to access c
+k apply -f role-http-a-c-gw.yaml 
+# allows c to access a
+k apply -f role-http-c-a-gw.yaml 
+
+
 
 }
 
