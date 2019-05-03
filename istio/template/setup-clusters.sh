@@ -589,17 +589,25 @@ setup-routing-lb-gw "cluster-2" "d"
 
 function setup-discovery-cluster1tob () {
 
-#  apply the deployments manually for testbed : res-clustx, and svc in each clusters
-#  then below is that c shared in cluster-1 and cluster-2
-
-#  I want to have remote c available from both clusters
+#  I want to have remote b available from cluster-1
 get-gw-addr
 add-serviceentry "cluster-1" "b-svc" "127.255.0.25"
+# below not required ?
 add-serviceentry "cluster-2" "b-svc" "123.255.0.15"
 
-#  I want to load balance c across clusters
 setup-routing-discovery-gw "cluster-1" "b"
+# below not required ?
 setup-routing-discovery-gw "cluster-2" "b"
+
+}
+
+
+function setup-discovery-cluster2toa () {
+#  I want to have remote a available from cluster-2
+get-gw-addr
+add-serviceentry "cluster-2" "a-svc" "123.255.0.16"
+
+setup-routing-discovery-gw "cluster-2" "a"
 
 }
 
@@ -614,6 +622,7 @@ k apply -f a-p.yaml
 k apply -f c-p.yaml
 k apply -f d-p.yaml
 k apply -f a-svc-http.yaml
+k apply -f b-svc-http.yaml
 k apply -f c-svc-http.yaml
 k apply -f d-svc-http.yaml
 
@@ -625,6 +634,7 @@ k apply -f res-clust2.yaml
 k apply -f b-b.yaml
 k apply -f c-b.yaml
 k apply -f d-b.yaml
+k apply -f a-svc-http.yaml
 k apply -f b-svc-http.yaml
 k apply -f c-svc-http.yaml
 k apply -f d-svc-http.yaml
@@ -632,8 +642,8 @@ k apply -f d-svc-http.yaml
 # the following configures the necessary service entries and routing rules for this testbed
 setup-lb-c
 setup-lb-d
-setup-discovery-cluster1tob
-
+# setup-discovery-cluster1tob
+setup-discovery-cluster2toa
 
 }
 
