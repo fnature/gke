@@ -1,13 +1,13 @@
-k () { kubectl "$@"; }
-k19 () { kubectx cilium19; }
-k20 () { kubectx cilium20; }
-kp () { kubectx primary; }
-kb () { kubectx burst; }
-kx () { kubectx; }
+#!/bin/bash
 
-ga () { git add *; }
-gc () { git commit -m 'CommitGKE'; }
-gp () { git push -u origin master; }
-gitsaveall () { git add * && git commit -m 'moi' && git push -u origin master; }
+function k () { kubectl "$@"; }
+function k19 () { kubectx cilium19; }
+function k20 () { kubectx cilium20; }
+function kp () { kubectx primary; }
+function kb () { kubectx burst; }
+function kx () { kubectx; }
 
-mytest() { echo 'mytest'; }
+function ga () { git add *; }
+function gc () { git commit -m 'CommitGKE'; }
+function gp () { git push -u origin master; }
+function gitsaveall () { git add * && git commit -m 'moi' && git push -u origin master; }

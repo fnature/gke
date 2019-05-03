@@ -1,23 +1,21 @@
 apiVersion: "rbac.istio.io/v1alpha1"
 kind: ServiceRole
 metadata:
-  name: c
+  name: b
   namespace: default
 spec:
   rules:
-  - services: ["c-svc.default.svc.cluster.local"]
-    constraints:
-    - key: "destination.port"
-      values: ["80"]
+  - services: ["b-svc.default.svc.cluster.local","b-svc.default.global"]
+    methods: ["GET"]
 ---
 apiVersion: "rbac.istio.io/v1alpha1"
 kind: ServiceRoleBinding
 metadata:
-  name: a-c
+  name: a-b
   namespace: default
 spec:
   subjects:
   - user: "cluster.local/ns/default/sa/a-sa"
   roleRef:
     kind: ServiceRole
-    name: c
+    name: b
