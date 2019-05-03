@@ -622,18 +622,19 @@ k apply -f a-p.yaml
 k apply -f c-p.yaml
 k apply -f d-p.yaml
 k apply -f a-svc-http.yaml
+# we need the service b in cluster-1. Issue is that istio doesn't resolve b-svc to b-svc.default.global
 k apply -f b-svc-http.yaml
 k apply -f c-svc-http.yaml
 k apply -f d-svc-http.yaml
 
-# we need the service b in cluster-1. Issue is that istio doesn't resolve b-svc to b-svc.default.global 
-k apply -f b-svc-http.yaml
+ 
 
 kubectl config use-context "gke_${proj}_${zone}_cluster-2"
 k apply -f res-clust2.yaml
 k apply -f b-b.yaml
 k apply -f c-b.yaml
 k apply -f d-b.yaml
+# we need the service a in cluster-2. Issue is that istio doesn't resolve a-svc to a-svc.default.global
 k apply -f a-svc-http.yaml
 k apply -f b-svc-http.yaml
 k apply -f c-svc-http.yaml
