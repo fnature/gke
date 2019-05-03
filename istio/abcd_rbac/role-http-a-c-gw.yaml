@@ -1,0 +1,21 @@
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRole
+metadata:
+  name: c
+  namespace: default
+spec:
+  rules:
+  - services: ["c-svc.default.svc.cluster.local","c-svc.default.global"]
+    methods: ["GET"]
+---
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRoleBinding
+metadata:
+  name: a-c
+  namespace: default
+spec:
+  subjects:
+  - user: "cluster.local/ns/default/sa/a-sa"
+  roleRef:
+    kind: ServiceRole
+    name: c

@@ -629,6 +629,7 @@ k apply -f b-svc-http.yaml
 k apply -f c-svc-http.yaml
 k apply -f d-svc-http.yaml
 
+# the following configures the necessary service entries and routing rules for this testbed
 setup-lb-c
 setup-lb-d
 setup-discovery-cluster1tob
