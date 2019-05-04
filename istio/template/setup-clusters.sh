@@ -688,7 +688,68 @@ k apply -f role-http-a-c-gw.yaml
 k apply -f role-http-c-a-gw.yaml 
 }
 
+function setup-testbed-rbac-shared-tcp-gw {
 
+kubectl config use-context "gke_${proj}_${zone}_cluster-1"
+k apply -f res-clust1.yaml
+k apply -f a-p.yaml
+k apply -f c-p.yaml
+k apply -f d-p.yaml
+k apply -f a-svc-tcp.yaml
+# we need the service b in cluster-1. Issue is that istio doesn't resolve b-svc to b-svc.default.global
+# I disable it here, as we will test by calling b-svc.default.global directly
+# k apply -f b-svc-tcp.yaml
+k apply -f c-svc-tcp.yaml
+k apply -f d-svc-tcp.yaml
+
+# We enforce mTLS required for RBAC
+k apply -f meshpolicy.yaml
+k apply -f default_destinationrule.yaml
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-2"
+k apply -f res-clust2.yaml
+k apply -f b-b.yaml
+k apply -f c-b.yaml
+k apply -f d-b.yaml
+# we need the service a in cluster-2. Issue is that istio doesn't resolve a-svc to a-svc.default.global
+# I disable it here, as we will test by calling b-svc.default.global directly
+# k apply -f a-svc-tcp.yaml
+k apply -f b-svc-tcp.yaml
+k apply -f c-svc-tcp.yaml
+k apply -f d-svc-tcp.yaml
+
+# We enforce mTLS required for RBAC
+k apply -f meshpolicy.yaml
+k apply -f default_destinationrule.yaml
+
+# the following configures the necessary service entries and routing rules for this testbed in both clusters
+setup-lb-c
+setup-lb-d
+setup-discovery-cluster1tob
+setup-discovery-cluster2toa
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-1"
+# We enforce RBAC ( default is to block all traffic )
+k apply -f ClusterRbacConfig.yaml
+
+# allows all to access d
+k apply -f role-tcp-d-gw.yaml 
+# allows a to access c
+k apply -f role-tcp-a-c-gw.yaml 
+# allows c to access a
+k apply -f role-tcp-c-a-gw.yaml 
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-2"
+# We enforce RBAC ( default is to block all traffic )
+k apply -f ClusterRbacConfig.yaml
+
+# allows all to access d
+k apply -f role-tcp-d-gw.yaml 
+# allows a to access c
+k apply -f role-tcp-a-c-gw.yaml 
+# allows c to access a
+k apply -f role-tcp-c-a-gw.yaml 
+}
 
 #  
 #setup-cluster "cluster-1"

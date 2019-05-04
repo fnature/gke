@@ -5,7 +5,7 @@ metadata:
   namespace: default
 spec:
   rules:
-  - services: ["d-svc.default.svc.cluster.local"]
+  - services: ["d-svc.default.svc.cluster.local","d-svc.default.global"]
     constraints:
     - key: "destination.port"
       values: ["80"]
