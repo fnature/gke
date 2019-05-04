@@ -636,6 +636,10 @@ k apply -f a-svc-http.yaml
 k apply -f c-svc-http.yaml
 k apply -f d-svc-http.yaml
 
+# We enforce mTLS required for RBAC
+k apply -f meshpolicy.yaml
+k apply -f default_destinationrule.yaml
+
  
 
 kubectl config use-context "gke_${proj}_${zone}_cluster-2"
@@ -650,7 +654,11 @@ k apply -f b-svc-http.yaml
 k apply -f c-svc-http.yaml
 k apply -f d-svc-http.yaml
 
-# the following configures the necessary service entries and routing rules for this testbed
+# We enforce mTLS required for RBAC
+k apply -f meshpolicy.yaml
+k apply -f default_destinationrule.yaml
+
+# the following configures the necessary service entries and routing rules for this testbed in both clusters
 setup-lb-c
 setup-lb-d
 setup-discovery-cluster1tob
@@ -658,6 +666,9 @@ setup-discovery-cluster2toa
 
 
 kubectl config use-context "gke_${proj}_${zone}_cluster-1"
+# We enforce RBAC ( default is to block all traffic )
+k apply -f ClusterRbacConfig.yaml
+
 # allows all to access d
 k apply -f role-http-d-gw.yaml 
 # allows a to access c
@@ -666,15 +677,15 @@ k apply -f role-http-a-c-gw.yaml
 k apply -f role-http-c-a-gw.yaml 
 
 kubectl config use-context "gke_${proj}_${zone}_cluster-2"
+# We enforce RBAC ( default is to block all traffic )
+k apply -f ClusterRbacConfig.yaml
+
 # allows all to access d
 k apply -f role-http-d-gw.yaml 
 # allows a to access c
 k apply -f role-http-a-c-gw.yaml 
 # allows c to access a
 k apply -f role-http-c-a-gw.yaml 
-
-
-
 }
 
 
