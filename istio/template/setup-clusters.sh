@@ -570,33 +570,7 @@ setup-routing-discovery-gw $2 $1
 }
 
 
-function setup-testbed-rbac-noneshared-gw {
-#  This setup is not working
-#  we can't curl across clusters with service name x-svc, only with x-svc.default.global
 
-kubectl config use-context "gke_${proj}_${zone}_cluster-1"
-k apply -f res-clust1.yaml
-k apply -f a-p.yaml
-k apply -f b-p.yaml
-k apply -f a-svc-http.yaml
-k apply -f b-svc-http.yaml
-
-
-setup-discovery-gw "c" "cluster-1" "172.255.0.15"
-setup-discovery-gw "d" "cluster-1" "172.255.0.16"
-
-
-kubectl config use-context "gke_${proj}_${zone}_cluster-2"
-k apply -f res-clust2.yaml
-k apply -f c-b.yaml
-k apply -f d-b.yaml
-k apply -f c-svc-http.yaml
-k apply -f d-svc-http.yaml
-
-
-setup-discovery-gw "a" "cluster-2" "172.255.0.17"
-setup-discovery-gw "b" "cluster-2" "172.255.0.18"
-}
 
 function clean-testbed-gw {
 
@@ -835,6 +809,113 @@ k apply -f role-tcp-a-c-gw.yaml
 k apply -f role-tcp-c-a-gw.yaml 
 }
 
-#  
-#setup-cluster "cluster-1"
-#setup-cluster "cluster-2"
+
+function setup-testbed-rbac-noneshared-tcp-gw {
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-1"
+k apply -f res-clust1.yaml
+k apply -f a-p.yaml
+k apply -f b-p.yaml
+k apply -f a-svc-tcp.yaml
+k apply -f b-svc-tcp.yaml
+
+# We enforce mTLS required for RBAC
+k apply -f meshpolicy.yaml
+k apply -f default_destinationrule.yaml
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-2"
+k apply -f res-clust2.yaml
+k apply -f c-b.yaml
+k apply -f d-b.yaml
+k apply -f c-svc-tcp.yaml
+k apply -f d-svc-tcp.yaml
+
+# We enforce mTLS required for RBAC
+k apply -f meshpolicy.yaml
+k apply -f default_destinationrule.yaml
+
+# the following configures the necessary service entries
+get-gw-addr
+add-serviceentry "cluster-1" "c-svc" "127.255.0.24"
+add-serviceentry "cluster-1" "d-svc" "127.255.0.25"
+add-serviceentry "cluster-2" "a-svc" "123.255.0.24"
+add-serviceentry "cluster-2" "b-svc" "123.255.0.25"
+
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-1"
+# We enforce RBAC ( default is to block all traffic )
+k apply -f ClusterRbacConfig.yaml
+
+# allows all to access d
+k apply -f role-tcp-d-gw.yaml 
+# allows a to access c
+k apply -f role-tcp-a-c-gw.yaml 
+# allows c to access a
+k apply -f role-tcp-c-a-gw.yaml 
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-2"
+# We enforce RBAC ( default is to block all traffic )
+k apply -f ClusterRbacConfig.yaml
+
+# allows all to access d
+k apply -f role-tcp-d-gw.yaml 
+# allows a to access c
+k apply -f role-tcp-a-c-gw.yaml 
+# allows c to access a
+k apply -f role-tcp-c-a-gw.yaml 
+}
+
+function setup-testbed-rbac-noneshared-http-gw {
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-1"
+k apply -f res-clust1.yaml
+k apply -f a-p.yaml
+k apply -f b-p.yaml
+k apply -f a-svc-http.yaml
+k apply -f b-svc-http.yaml
+
+# We enforce mTLS required for RBAC
+k apply -f meshpolicy.yaml
+k apply -f default_destinationrule.yaml
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-2"
+k apply -f res-clust2.yaml
+k apply -f c-b.yaml
+k apply -f d-b.yaml
+k apply -f c-svc-http.yaml
+k apply -f d-svc-http.yaml
+
+# We enforce mTLS required for RBAC
+k apply -f meshpolicy.yaml
+k apply -f default_destinationrule.yaml
+
+# the following configures the necessary service entries
+get-gw-addr
+add-serviceentry "cluster-1" "c-svc" "127.255.0.24"
+add-serviceentry "cluster-1" "d-svc" "127.255.0.25"
+add-serviceentry "cluster-2" "a-svc" "123.255.0.24"
+add-serviceentry "cluster-2" "b-svc" "123.255.0.25"
+
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-1"
+# We enforce RBAC ( default is to block all traffic )
+k apply -f ClusterRbacConfig.yaml
+
+# allows all to access d
+k apply -f role-http-d-gw.yaml 
+# allows a to access c
+k apply -f role-http-a-c-gw.yaml 
+# allows c to access a
+k apply -f role-http-c-a-gw.yaml 
+
+kubectl config use-context "gke_${proj}_${zone}_cluster-2"
+# We enforce RBAC ( default is to block all traffic )
+k apply -f ClusterRbacConfig.yaml
+
+# allows all to access d
+k apply -f role-http-d-gw.yaml 
+# allows a to access c
+k apply -f role-http-a-c-gw.yaml 
+# allows c to access a
+k apply -f role-http-c-a-gw.yaml 
+}
