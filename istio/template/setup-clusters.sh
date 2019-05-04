@@ -4,7 +4,7 @@
 export proj=$(gcloud config get-value project)
 export zone="europe-west2-a"
 
-source myalias.sh
+source .myalias.sh
 
 root="/home/ed_mitchell/myscript/istio/istio-1.1.2"
 # cd $root
@@ -539,7 +539,8 @@ k delete virtualservice --all
 k delete destinationrule --all
 k delete serviceentry --all
 k delete serviceaccount --all
-
+k delete servicerolebinding --all
+k delete servicerole --all
 
 kubectl config use-context "gke_${proj}_${zone}_cluster-2"
 k delete deployment --all
@@ -548,7 +549,11 @@ k delete virtualservice --all
 k delete destinationrule --all
 k delete serviceentry --all
 k delete serviceaccount --all
+k delete servicerolebinding --all
+k delete servicerole --all
 }
+
+
 
 
 
@@ -592,12 +597,13 @@ function setup-discovery-cluster1tob () {
 #  I want to have remote b available from cluster-1
 get-gw-addr
 add-serviceentry "cluster-1" "b-svc" "127.255.0.25"
-# below not required ?
-add-serviceentry "cluster-2" "b-svc" "123.255.0.15"
+# below not required normally
+# add-serviceentry "cluster-2" "b-svc" "123.255.0.15"
 
-setup-routing-discovery-gw "cluster-1" "b"
+# below should not be required, as x-svc should resolve to x-svc.default.global automatically..
+#setup-routing-discovery-gw "cluster-1" "b"
 # below not required ?
-setup-routing-discovery-gw "cluster-2" "b"
+#setup-routing-discovery-gw "cluster-2" "b"
 
 }
 
@@ -605,11 +611,11 @@ setup-routing-discovery-gw "cluster-2" "b"
 function setup-discovery-cluster2toa () {
 #  I want to have remote a available from cluster-2
 get-gw-addr
-add-serviceentry "cluster-1" "a-svc" "127.255.0.26"
+# add-serviceentry "cluster-1" "a-svc" "127.255.0.26"
 add-serviceentry "cluster-2" "a-svc" "123.255.0.16"
 
-setup-routing-discovery-gw "cluster-1" "a"
-setup-routing-discovery-gw "cluster-2" "a"
+# below should not be required, as x-svc should resolve to x-svc.default.global automatically..
+# setup-routing-discovery-gw "cluster-2" "a"
 
 }
 
@@ -625,7 +631,8 @@ k apply -f c-p.yaml
 k apply -f d-p.yaml
 k apply -f a-svc-http.yaml
 # we need the service b in cluster-1. Issue is that istio doesn't resolve b-svc to b-svc.default.global
-k apply -f b-svc-http.yaml
+# I disable it here, as we will test by calling b-svc.default.global directly
+# k apply -f b-svc-http.yaml
 k apply -f c-svc-http.yaml
 k apply -f d-svc-http.yaml
 
@@ -637,7 +644,8 @@ k apply -f b-b.yaml
 k apply -f c-b.yaml
 k apply -f d-b.yaml
 # we need the service a in cluster-2. Issue is that istio doesn't resolve a-svc to a-svc.default.global
-k apply -f a-svc-http.yaml
+# I disable it here, as we will test by calling b-svc.default.global directly
+# k apply -f a-svc-http.yaml
 k apply -f b-svc-http.yaml
 k apply -f c-svc-http.yaml
 k apply -f d-svc-http.yaml
