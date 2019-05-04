@@ -407,6 +407,74 @@ EOF
 
 }
 
+function setup-routing-lb-tcp-gw () {
+
+kubectl config use-context "gke_${proj}_${zone}_$1"
+
+if [ $1 = "cluster-1" ]; then
+	othercluster_label="cluster-2"
+else
+        othercluster_label="cluster-1"
+fi
+
+echo "------ we create the subsets for the global address"
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: $2-global
+spec:
+  host: $2-svc.default.global
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+  subsets:
+  - name: $2
+    labels:
+      cluster: $othercluster_label
+EOF
+
+echo "------ we create the subsets for the local address"
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: $2
+spec:
+  host: $2-svc.default.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+  subsets:
+  - name: $2
+    labels:
+      name: $2
+EOF
+
+echo "------ we create the routes for the local address"
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: $2
+spec:
+  hosts:
+    - $2-svc.default.svc.cluster.local
+  tcp:
+  - route:
+    - destination:
+        host: $2-svc.default.svc.cluster.local
+        subset: $2
+      weight: 50
+    - destination:
+        host: $2-svc.default.global
+        subset: $2
+      weight: 50
+EOF
+
+
+}
+
 
 function setup-routing-discovery-gw () {
 # The aim is to be able to curl x-svc to remote cluster.
@@ -541,6 +609,7 @@ k delete serviceentry --all
 k delete serviceaccount --all
 k delete servicerolebinding --all
 k delete servicerole --all
+k delete ClusterRbacConfig default
 
 kubectl config use-context "gke_${proj}_${zone}_cluster-2"
 k delete deployment --all
@@ -551,6 +620,7 @@ k delete serviceentry --all
 k delete serviceaccount --all
 k delete servicerolebinding --all
 k delete servicerole --all
+k delete ClusterRbacConfig default
 }
 
 
@@ -570,8 +640,16 @@ add-serviceentry "cluster-1" "c-svc" "127.255.0.23"
 add-serviceentry "cluster-2" "c-svc" "123.255.0.13"
 
 #  I want to load balance c across clusters
-setup-routing-lb-gw "cluster-1" "c"
-setup-routing-lb-gw "cluster-2" "c"
+
+if [ $1 = "tcp" ]; then
+	setup-routing-lb-tcp-gw "cluster-1" "c"
+	setup-routing-lb-tcp-gw "cluster-2" "c"
+else
+	setup-routing-lb-gw "cluster-1" "c"
+	setup-routing-lb-gw "cluster-2" "c"
+fi
+
+
 }
 
 function setup-lb-d () {
@@ -585,8 +663,14 @@ add-serviceentry "cluster-1" "d-svc" "127.255.0.24"
 add-serviceentry "cluster-2" "d-svc" "123.255.0.14"
 
 #  I want to load balance c across clusters
-setup-routing-lb-gw "cluster-1" "d"
-setup-routing-lb-gw "cluster-2" "d"
+
+if [ $1 = "tcp" ]; then
+	setup-routing-lb-tcp-gw "cluster-1" "d"
+	setup-routing-lb-tcp-gw "cluster-2" "d"
+else
+	setup-routing-lb-gw "cluster-1" "d"
+	setup-routing-lb-gw "cluster-2" "d"
+fi
 }
 
 
@@ -723,8 +807,8 @@ k apply -f meshpolicy.yaml
 k apply -f default_destinationrule.yaml
 
 # the following configures the necessary service entries and routing rules for this testbed in both clusters
-setup-lb-c
-setup-lb-d
+setup-lb-c "tcp"
+setup-lb-d "tcp"
 setup-discovery-cluster1tob
 setup-discovery-cluster2toa
 
