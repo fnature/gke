@@ -20,16 +20,30 @@ root="/home/ed_mitchell/myscript/istio/istio-1.1.2"
 
 function setup-cluster () {
 
+
+
+if [ $2 = "policy" ]; then
+echo "creating cluster with network policy enabled"
 gcloud container clusters create $1 --zone $zone --username "admin" \
-  --cluster-version latest --machine-type "n1-standard-2" --image-type "COS" --disk-size "100" \
-  --scopes "https://www.googleapis.com/auth/compute","https://www.googleapis.com/auth/devstorage.read_only",\
+--cluster-version latest --machine-type "n1-standard-2" --image-type "COS" --disk-size "100" \
+--scopes "https://www.googleapis.com/auth/compute","https://www.googleapis.com/auth/devstorage.read_only",\
 "https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring",\
 "https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly",\
 "https://www.googleapis.com/auth/trace.append" \
---num-nodes "4" --network "default" --enable-cloud-logging --enable-cloud-monitoring --enable-ip-alias
+--num-nodes "4" --network "default" --enable-cloud-logging --enable-cloud-monitoring --enable-ip-alias --enable-network-policy
+else
+echo "creating cluster with network policy disabled"
+gcloud container clusters create $1 --zone $zone --username "admin" \
+--cluster-version latest --machine-type "n1-standard-2" --image-type "COS" --disk-size "100" \
+--scopes "https://www.googleapis.com/auth/compute","https://www.googleapis.com/auth/devstorage.read_only",\
+"https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring",\
+"https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly",\
+"https://www.googleapis.com/auth/trace.append" \
+--num-nodes "4" --network "default" --enable-cloud-logging --enable-cloud-monitoring --enable-ip-alias    
+#  async option  while cluster-2 creation is processing didn't work....
+fi
 
-# --async is used here.. and hopefully cluster-1 will be up when cluster-2 will be finished..
-#  async while cluster-2 creation is working didn't work....
+
 
 
 gcloud container clusters get-credentials $1 --zone $zone
@@ -57,7 +71,6 @@ gcloud compute firewall-rules create istio-multicluster-test-pods \
 }
 
 function setup-clusters () {
-# test that not sure if it works !! 
 echo "usage :  setup-clusters nameofthezone"
 echo "if no zone specified, default is europe-west2-a"
 
@@ -67,6 +80,19 @@ setup-cluster "cluster-2"
 
 setup-firewall
 }
+
+function setup-clusters-policy () {
+echo "usage :  setup-clusters nameofthezone"
+echo "if no zone specified, default is europe-west2-a"
+
+zone=${1:-"europe-west2-a"} 
+setup-cluster "cluster-1" "policy"
+setup-cluster "cluster-2" "policy"
+
+setup-firewall
+}
+
+
 
 
 
@@ -188,6 +214,13 @@ setup-istio-remote-vpn
 function setup-multicluster-vpn () {
 
 setup-clusters
+setup-istio-all-vpn
+
+}
+
+function setup-multicluster-vpn-policy () {
+
+setup-clusters-policy
 setup-istio-all-vpn
 
 }
