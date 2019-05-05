@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: b-sa
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: b
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: b
+    spec:
+      serviceAccountName: b-sa
+      containers:
+      - name: b
+        image: fnature/ngnix-curl:1
+        ports:
+         - containerPort: 80
+           name: http
+        volumeMounts:
+          - name: html
+            mountPath: /usr/share/nginx/html/
+      volumes:
+        - name: html
+          configMap:
+            name: res-clust2
+            items:
+              - key: message
+                path: index.html
