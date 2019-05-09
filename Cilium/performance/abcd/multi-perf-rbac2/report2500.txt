@@ -1,0 +1,11 @@
+Requests      [total, rate]            75000, 967.64
+Duration      [total, attack, wait]    1m51.877200825s, 1m17.508391732s, 34.368809093s
+Latencies     [mean, 50, 95, 99, max]  34.754525387s, 41.050961461s, 1m21.445721271s, 1m35.430151763s, 1m39.224148821s
+Bytes In      [total, mean]            2710778, 36.14
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  27.46%
+Status Codes  [code:count]             0:27702  200:20598  503:26700  
+Error Set:
+Get http://c-svc-g: dial tcp 0.0.0.0:0->10.20.1.37:80: bind: address already in use
+Get http://c-svc-g: dial tcp 0.0.0.0:0->10.20.1.37:80: i/o timeout
+503 Service Unavailable
