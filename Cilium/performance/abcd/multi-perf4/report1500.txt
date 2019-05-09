@@ -1,0 +1,11 @@
+Requests      [total, rate]            45000, 1500.03
+Duration      [total, attack, wait]    29.999873953s, 29.999445281s, 428.672µs
+Latencies     [mean, 50, 95, 99, max]  222.299943ms, 394.005µs, 893.551136ms, 5.77410315s, 6.202463435s
+Bytes In      [total, mean]            1048632, 23.30
+Bytes Out     [total, mean]            0, 0.00
+Success       [ratio]                  89.63%
+Status Codes  [code:count]             0:4668  200:40332  
+Error Set:
+Get http://c-svc-g: EOF
+Get http://c-svc-g: http: server closed idle connection
+Get http://c-svc-g: read tcp 10.16.2.135:54467->10.20.13.78:80: read: connection reset by peer
