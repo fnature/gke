@@ -1,1 +1,0 @@
-alias mytest='echo bidule'
