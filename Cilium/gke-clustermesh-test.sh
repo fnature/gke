@@ -118,12 +118,12 @@ kubectl -n cilium apply -f clustermesh.yaml
 kubectx ${CLUSTER1}
 kubectl -n cilium delete pod -l k8s-app=cilium
 echo "waiting for daemon set cilium to be ready"
-until [ $(kubectl -n cilium get ds cilium -o jsonpath="{.status.numberReady}") == 2 ]; do echo -n "."; sleep 1; done; echo
+until [ $(kubectl -n cilium get ds cilium -o jsonpath="{.status.numberReady}") == 4 ]; do echo -n "."; sleep 1; done; echo
 
 kubectx ${CLUSTER2}
 kubectl -n cilium delete pod -l k8s-app=cilium
 echo "waiting for daemon set cilium to be ready"
-until [ $(kubectl -n cilium get ds cilium -o jsonpath="{.status.numberReady}") == 2 ]; do echo -n "."; sleep 1; done; echo
+until [ $(kubectl -n cilium get ds cilium -o jsonpath="{.status.numberReady}") == 4 ]; do echo -n "."; sleep 1; done; echo
 
 
 
